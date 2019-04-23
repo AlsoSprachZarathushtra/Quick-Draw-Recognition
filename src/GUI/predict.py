@@ -9,9 +9,11 @@ class Predictor():
         class_dict_path = 'labels_dict.npy'
         temp_dict = np.load(class_dict_path)
         weights_path = 'best_model_densenet121_binary.ckpt'
+#        weights_path = 'Binary_mobilenet.ckpt'
         self.labels_dict = {k: v for k, v in enumerate(temp_dict)}
         self.model = self.load_model(weights_path)
         self.model.summary()
+        self.model.predict(np.zeros([1,128,128,1]))
         
     def load_model(self, weights_path):
         model = keras.applications.DenseNet121(input_shape=(128,128,1),
@@ -24,7 +26,10 @@ class Predictor():
         
     def img_preprocess(self,img):
         img = img.resize((128,128))
-        img.save('temp.jpg')
+        img.save('temp.png')
+        img = np.array(img)
+        img = 255 - img
+
         img = np.array(img)
         img = img[np.newaxis,:,:,np.newaxis]
         return img

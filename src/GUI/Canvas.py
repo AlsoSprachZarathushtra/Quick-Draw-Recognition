@@ -4,8 +4,8 @@ import tkinter as tk
 from PIL import Image, ImageDraw
 from predict import Predictor
 
-width = 256
-height = 256
+width = 512
+height = 512
 
 class Application(tk.Tk):
     def __init__(self):
@@ -18,7 +18,6 @@ class Application(tk.Tk):
         self.previous_x = None
         self.previous_y = None
         self.canvas.bind("<B1-Motion>", self.on_button_move)
-        
         self.canvas.bind("<ButtonRelease-1>", self.on_button_release)
         self.canvas.bind("<Button-3>",self.reset)
         # create draw stuff
@@ -37,7 +36,8 @@ class Application(tk.Tk):
             self.previous_x = event.x
             self.previous_y = event.y
         else:
-            self.canvas.create_line((self.previous_x,self.previous_y),(event.x,event.y), width=5, fill='black')
+            self.canvas.create_line((self.previous_x,self.previous_y),(event.x,event.y), width=10, fill='black')
+            self.draw.line([self.previous_x, self.previous_y, event.x, event.y],fill='black',width=10)
             self.previous_x = event.x
             self.previous_y = event.y
 #            kernel_size = 5
@@ -47,6 +47,7 @@ class Application(tk.Tk):
     def on_button_release(self, event):
         #x0,y0 = (self.x, self.y)
         #x1,y1 = (event.x, event.y)
+        self.memImage.save("tmp.png")
         result = self.predictor.predict(self.memImage)
         print(result)
         self.previous_x = None
@@ -58,8 +59,7 @@ class Application(tk.Tk):
         self.draw = ImageDraw.Draw(self.memImage)
         self.canvas.delete("all")
         #self.canvas.create_rectangle(x0,y0,x1,y1, fill="black")
-        #self.memImage.save("tmp.jpg")
-        
+           
     
     def task(self):
         self.after(2000, func=self.task)  # reschedule event in 2 seconds
